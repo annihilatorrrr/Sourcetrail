@@ -7,7 +7,7 @@ def numberIn():
 
 
 def numberOut(num):
-	print(str(num), end="")
+	print(num, end="")
 
 
 def stringOut(str):
@@ -41,36 +41,34 @@ class Field(GameObject):
 
 	def __init__(self):
 		self._grid = []
-		for j in range(0, 3):
-			row = []
-			for i in range(0, 3):
-				row.append(Field.Token.TOKEN_NONE)
+		for _ in range(3):
+			row = [Field.Token.TOKEN_NONE for _ in range(3)]
 			self._grid.append(row)
 		self._left = 9
 
 
 	def clone(self):
 		field = Field()
-		for j in range(0, 3):
-			for i in range(0, 3):
+		for j in range(3):
+			for i in range(3):
 				field._grid[i][j] = self._grid[i][j]
 		field._left = self._left
 		return field
 
 
 	def clear(self):
-		for j in range(0, 3):
-			for i in range(0, 3):
+		for j in range(3):
+			for i in range(3):
 				self._grid[i][j] = Field.Token.TOKEN_NONE
 		self._left = 9
 
 
 	def show(self):
 		stringOut("   1   2   3\n")
-		for row in range(0, 3):
+		for row in range(3):
 			numberOut(row + 1)
 			stringOut(" ")
-			for col in range(0, 3):
+			for col in range(3):
 				if self._grid[row][col] == Field.Token.TOKEN_PLAYER_A:
 					stringOut(" X ")
 				elif self._grid[row][col] == Field.Token.TOKEN_PLAYER_B:
@@ -87,7 +85,7 @@ class Field(GameObject):
 	def sameInRow(self, token, amount):
 		total = amount * token.value
 		count = 0
-		for i in range(0, 3):
+		for i in range(3):
 			if self._grid[i][0].value + self._grid[i][1].value + self._grid[i][2].value == sum:
 				count += 1
 			if self._grid[0][i].value + self._grid[1][i].value + self._grid[2][i].value == sum:
@@ -141,7 +139,7 @@ class Player(GameObject):
 		self.name = name
 
 
-	def turn(field):
+	def turn(self):
 		raise NotImplementedError
 
 
@@ -204,9 +202,9 @@ class ArtificialPlayer(Player):
 		move = Field.Move()
 		sameMove = 0
 
-		for j in range(0, 3):
+		for j in range(3):
 			move.row = j
-			for i in range(0, 3):
+			for i in range(3):
 				move.col = i
 
 				if not field.isEmpty(move):
@@ -216,7 +214,7 @@ class ArtificialPlayer(Player):
 
 				turnValue = self._evaluate(field, token)
 				if turnValue == 0 and not field.isFull():
-					turnValue = -self._minMax(field, field.opponent(token), prefix + " ").value
+					turnValue = -self._minMax(field, field.opponent(token), f"{prefix} ").value
 
 				field.clearMove(move)
 
@@ -266,7 +264,7 @@ class TicTacToe:
 	def run(self):
 		self._field.show()
 		playerIndex = 0
-		for i in range(0, 9):
+		for _ in range(9):
 			player = self._players[playerIndex]
 			self._field.makeMove(player.turn(self._field), player.token)
 			self._field.show()
@@ -279,7 +277,7 @@ class TicTacToe:
 
 
 	def _reset(self):
-		for i in range(0, 2):
+		for i in range(2):
 			self._players[i] = None
 		self._field.clear()
 
